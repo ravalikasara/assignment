@@ -70,11 +70,11 @@ app.post('/login', async (request, response) => {
   try {
     const { username, password } = request.body;
     const user = await User.findOne({ username });
-    console.log(user)
+     console.log(user)
  
 
     if (!user) {
-
+      
       response.status(400).json({ message: "Invalid Username, please Register" });
     } else {
       const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -84,7 +84,7 @@ app.post('/login', async (request, response) => {
        
         const jwtToken = token.sign(payload, process.env.JWT_SECRET);
       
-        response.status(200).json({ jwtToken });
+        response.status(200).json({ jwtToken,user });
       } else {
         response.status(400).json({ message: "Invalid Password" });
       }
@@ -127,6 +127,16 @@ app.post('/task', async (request, response) => {
 app.get('/tasks', async (req, res) => {
   try {
     const tasks = await Task.find();
+    res.json(tasks);
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get('/users', async (req, res) => {
+  try {
+    const tasks = await User.find();
     res.json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
